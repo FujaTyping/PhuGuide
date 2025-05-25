@@ -17,8 +17,8 @@ interface FetchedPlaceData {
   description: string;
   duration: string;
   // Fields from new data structure, mapped from API
-  location?: string;       // Mapped from API key "Location"
-  attractionLink?: string; // Mapped from API key "Attraction Link"
+  location?: string; // Mapped from API key "Location"
+  attraclink?: string; // Mapped from API key "Attraction Link"
   tags?: string;           // Mapped from API key "tags"
   // Fields that might be optional or not in all API responses
   bestTime?: string;       // Was in old interface, might not be in new API data
@@ -57,7 +57,7 @@ export default function HomePage() {
             description: item.description,
             duration: item.duration,
             location: item.Location, // Map from API's "Location"
-            attractionLink: item["Attraction Link"], // Map from API's "Attraction Link"
+            attraclink: item.attraclink, // Map from API's "Attraction Link"
             tags: item.tags,
             bestTime: item.bestTime, // Will be undefined if not present in API item
           }));
@@ -233,7 +233,7 @@ export default function HomePage() {
                           {place.bestTime}
                         </div>
                       </div>
-                      <Link href={`/explore/${place.id}`}>
+                      <Link href={`${place.attraclink}`}>
                         <Button className="w-full bg-orange-500 hover:bg-orange-600">Learn More</Button>
                       </Link>
                     </div>

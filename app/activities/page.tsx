@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { MapPin, Clock, DollarSign, Star, Users } from "lucide-react"
-import Link from "next/link"
 
 // Interface for the raw data fetched from the API
 interface ApiActivity {
@@ -21,6 +20,7 @@ interface ApiActivity {
   rating: string // e.g., "4.9/5 average"
   groupSize: number // Group size is a number
   includes: string // Newline-separated string
+  maps: string; // URL for the map or booking link
   // 'bestTime' is not available in the new API data
 }
 
@@ -38,6 +38,7 @@ interface ProcessedActivity {
   rating: number // Parsed numeric rating
   groupSize: string // Formatted group size string
   includes: string[] // Array of included items
+  maps: string; // URL for the map or booking link
 }
 
 export default function ActivitiesPage() {
@@ -79,6 +80,7 @@ export default function ActivitiesPage() {
             rating: parseFloat(item.rating.split("/")[0]) || 0,
             groupSize: `Up to ${item.groupSize} people`,
             includes: item.includes.split("\n").map((i) => i.trim()).filter(Boolean),
+            maps: item.maps || "#", // Use the maps URL from API or fallback to "#"
           }
         })
 
@@ -206,10 +208,9 @@ export default function ActivitiesPage() {
 
                     <div className="flex justify-end pt-4"> {/* Adjusted alignment as 'Best Time' is removed */}
                       <div className="flex gap-2">
-                        <Link href={`/activities/${activity.id}`}>
-                          <Button variant="outline">Details</Button>
-                        </Link>
-                        <Button className="bg-emerald-500 hover:bg-emerald-600">Book Now</Button>
+                        <a href={`${activity.maps}`}>
+                          <Button className="bg-orange-500 hover:bg-orange-600">Details</Button>
+                        </a>
                       </div>
                     </div>
                   </CardContent>
