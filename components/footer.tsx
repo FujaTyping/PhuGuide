@@ -14,48 +14,48 @@ export function Footer() {
               <span className="font-bold text-xl font-['Poppins']">PhuGuide</span>
             </Link>
             <p className="text-gray-400 mb-4">
-              ค้นพบภูเก็ตผ่านการผจญภัยแบบเกมและประสบการณ์ที่น่าทึ่ง
+              Discover Phuket through gamified adventures and amazing experiences.
             </p>
             <div className="flex space-x-4">
-              <Facebook className="h-5 w-5 text-gray-400 hover:text-white cursor-pointer" />
-              <Instagram className="h-5 w-5 text-gray-400 hover:text-white cursor-pointer" />
-              <Twitter className="h-5 w-5 text-gray-400 hover:text-white cursor-pointer" />
+              <Link href="#" aria-label="Facebook"><Facebook className="h-5 w-5 text-gray-400 hover:text-white cursor-pointer" /></Link>
+              <Link href="#" aria-label="Instagram"><Instagram className="h-5 w-5 text-gray-400 hover:text-white cursor-pointer" /></Link>
+              <Link href="#" aria-label="Twitter"><Twitter className="h-5 w-5 text-gray-400 hover:text-white cursor-pointer" /></Link>
             </div>
           </div>
 
 
           <div>
-            <h3 className="font-semibold text-lg mb-4">สำรวจ</h3>
+            <h3 className="font-semibold text-lg mb-4">Explore</h3>
             <ul className="space-y-2 text-gray-400">
               <li>
                 <Link href="/explore" className="hover:text-white">
-                  สถานที่ท่องเที่ยว
+                  Attractions
                 </Link>
               </li>
               <li>
                 <Link href="/missions" className="hover:text-white">
-                  ภารกิจ
+                  Missions
                 </Link>
               </li>
               <li>
                 <Link href="/trip-planner" className="hover:text-white">
-                  วางแผนการเดินทาง
+                  Trip Planner
                 </Link>
               </li>
               <li>
                 <Link href="/about" className="hover:text-white">
-                  เกี่ยวกับภูเก็ต
+                  About Phuket
                 </Link>
               </li>
             </ul>
           </div>
 
           <div>
-            <h3 className="font-semibold text-lg mb-4">ชุมชน</h3>
+            <h3 className="font-semibold text-lg mb-4">Community</h3>
             <ul className="space-y-2 text-gray-400">
               <li>
                 <Link href="/leaderboard" className="hover:text-white">
-                  กระดานผู้นำ
+                  Leaderboard
                 </Link>
               </li>
               <li>
@@ -65,38 +65,38 @@ export function Footer() {
               </li>
               <li>
                 <Link href="/minigames" className="hover:text-white">
-                  มินิเกม
+                  Minigames
                 </Link>
               </li>
               <li>
                 <Link href="/profile" className="hover:text-white">
-                  โปรไฟล์
+                  Profile
                 </Link>
               </li>
             </ul>
           </div>
 
           <div>
-            <h3 className="font-semibold text-lg mb-4">การสนับสนุน</h3>
+            <h3 className="font-semibold text-lg mb-4">Support</h3>
             <ul className="space-y-2 text-gray-400">
               <li>
                 <Link href="#" className="hover:text-white">
-                  ศูนย์ช่วยเหลือ
+                  Help Center
                 </Link>
               </li>
               <li>
                 <Link href="#" className="hover:text-white">
-                  ติดต่อเรา
+                  Contact Us
                 </Link>
               </li>
               <li>
                 <Link href="#" className="hover:text-white">
-                  นโยบายความเป็นส่วนตัว
+                  Privacy Policy
                 </Link>
               </li>
               <li>
                 <Link href="#" className="hover:text-white">
-                  ข้อกำหนดในการให้บริการ
+                  Terms of Service
                 </Link>
               </li>
             </ul>
@@ -104,7 +104,7 @@ export function Footer() {
         </div>
 
         <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-          <p>&copy; 2024 ภูเก็ต ทราเวล แอดไวเซอร์ สงวนลิขสิทธิ์ทุกประการ</p>
+          <p>&copy; 2024 Phuket Travel Advisor. All rights reserved.</p>
         </div>
       </div>
     </footer>

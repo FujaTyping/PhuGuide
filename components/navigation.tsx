@@ -11,14 +11,14 @@ export function Navigation() {
   const [isOpen, setIsOpen] = useState(false)
 
   const navItems = [
-    { href: "/", label: "หน้าแรก", icon: Home },
-    { href: "/explore", label: "สถาณที่", icon: MapPin },
-    { href: "/activities", label: "กิจกรรม", icon: Activity },
-    { href: "/trip-planner", label: "วางแผนทริป", icon: Calendar },
-    { href: "/food", label: "อาหาร", icon: Utensils },
-    { href: "/photo-spots", label: "", icon: Camera },
-    { href: "/about", label: "แนะนำ", icon: Info },
-    { href: "/contact", label: "ติดต่อ", icon: Info },
+    { href: "/", label: "Home", icon: Home },
+    { href: "/explore", label: "Explore", icon: MapPin },
+    { href: "/activities", label: "Activities", icon: Activity },
+    { href: "/trip-planner", label: "Trip Planner", icon: Calendar },
+    { href: "/food", label: "Food", icon: Utensils },
+    { href: "/photo-spots", label: "Photo Spots", icon: Camera },
+    { href: "/about", label: "About", icon: Info },
+    { href: "/contact", label: "Contact", icon: Info },
   ]
 
   return (
@@ -73,7 +73,7 @@ export function Navigation() {
 
             {/* Contact Link */}
             <Link href="/contact">
-              <Button className="bg-orange-500 hover:bg-orange-600 hidden sm:flex">ติดต่อ</Button>
+              <Button className="bg-orange-500 hover:bg-orange-600 hidden sm:flex">Contact</Button>
             </Link>
           </div>
         </div>

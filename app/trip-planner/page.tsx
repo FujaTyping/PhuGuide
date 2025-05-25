@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -9,7 +11,21 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Calendar, Clock, DollarSign, Users, Star, Plus, Trash2 } from "lucide-react"
-import Image from "next/image"
+
+interface Activity {
+  id: number
+  name: string
+  category: string
+  duration: string
+  cost: string // e.g., "$$"
+  rating: number
+  image: string
+  description: string
+  tags: string[]
+  bestFor: string[]
+  timeNeeded: number
+  price?: string // Optional: as per API data, e.g., "1,500–3,000 THB"
+}
 
 export default function TripPlannerPage() {
   const [selectedActivities, setSelectedActivities] = useState<number[]>([])
@@ -17,89 +33,49 @@ export default function TripPlannerPage() {
   const [groupSize, setGroupSize] = useState("")
   const [budget, setBudget] = useState("")
   const [interests, setInterests] = useState<string[]>([])
-
-  const activities = [
-    {
-      id: 1,
-      name: "Khao Sok National Park",
-      category: "Nature",
-      duration: "Full Day",
-      cost: "$$",
-      rating: 4.8,
-      image: "/placeholder.svg?height=200&width=300",
-      description: "Explore ancient rainforest and limestone cliffs",
-      tags: ["Adventure", "Wildlife", "Hiking"],
-      bestFor: ["Solo", "Couple", "Family"],
-      timeNeeded: 8,
-    },
-    {
-      id: 2,
-      name: "Tapi River Cruise",
-      category: "Activities",
-      duration: "3 Hours",
-      cost: "$",
-      rating: 4.6,
-      image: "/placeholder.svg?height=200&width=300",
-      description: "Scenic boat ride through mangroves",
-      tags: ["Relaxing", "Nature", "Photography"],
-      bestFor: ["Couple", "Family", "Friends"],
-      timeNeeded: 3,
-    },
-    {
-      id: 3,
-      name: "Night Market Food Tour",
-      category: "Food",
-      duration: "2 Hours",
-      cost: "$",
-      rating: 4.9,
-      image: "/placeholder.svg?height=200&width=300",
-      description: "Taste authentic Southern Thai cuisine",
-      tags: ["Food", "Culture", "Evening"],
-      bestFor: ["Solo", "Couple", "Friends"],
-      timeNeeded: 2,
-    },
-    {
-      id: 4,
-      name: "Wat Chalong Temple",
-      category: "Culture",
-      duration: "2 Hours",
-      cost: "Free",
-      rating: 4.7,
-      image: "/placeholder.svg?height=200&width=300",
-      description: "Historic Buddhist temple complex",
-      tags: ["Culture", "Spiritual", "Architecture"],
-      bestFor: ["Solo", "Couple", "Family"],
-      timeNeeded: 2,
-    },
-    {
-      id: 5,
-      name: "Kayaking Adventure",
-      category: "Activities",
-      duration: "Half Day",
-      cost: "$$",
-      rating: 4.5,
-      image: "/placeholder.svg?height=200&width=300",
-      description: "Paddle through hidden lagoons",
-      tags: ["Adventure", "Water Sports", "Nature"],
-      bestFor: ["Couple", "Friends"],
-      timeNeeded: 4,
-    },
-    {
-      id: 6,
-      name: "Cooking Class",
-      category: "Food",
-      duration: "4 Hours",
-      cost: "$$",
-      rating: 4.8,
-      image: "/placeholder.svg?height=200&width=300",
-      description: "Learn traditional Thai cooking",
-      tags: ["Food", "Learning", "Hands-on"],
-      bestFor: ["Solo", "Couple", "Family"],
-      timeNeeded: 4,
-    },
-  ]
+  const [allActivities, setAllActivities] = useState<Activity[]>([])
+  const [isLoadingActivities, setIsLoadingActivities] = useState(true)
+  const [fetchError, setFetchError] = useState<string | null>(null)
 
   const interestOptions = ["Adventure", "Culture", "Food", "Nature", "Relaxing", "Photography", "Learning"]
+
+  useEffect(() => {
+    const fetchActivitiesData = async () => {
+      setIsLoadingActivities(true)
+      setFetchError(null)
+      try {
+        const response = await fetch("https://script.google.com/macros/s/AKfycby6QfIZQ5vybUKjXTS_f8SopLxHKH5mJQutGzUx_9gNrOVhO8zmhI3iGaYJNh6kIN2Gyg/exec")
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
+        const data = await response.json()
+
+        // Assuming the API returns an array of activity objects
+        const transformedActivities: Activity[] = data.map((item: any) => ({
+          id: Number(item.id),
+          name: String(item.name),
+          category: String(item.category),
+          duration: String(item.duration),
+          cost: String(item.cost),
+          rating: Number(item.rating),
+          image: String(item.image),
+          description: String(item.description),
+          tags: typeof item.tags === 'string' ? item.tags.split(',').map((tag: string) => tag.trim()).filter(Boolean) : [],
+          bestFor: typeof item.bestFor === 'string' ? item.bestFor.split(',').map((bf: string) => bf.trim()).filter(Boolean) : [],
+          timeNeeded: Number(item.timeNeeded),
+          price: item.price ? String(item.price) : undefined,
+        }))
+        setAllActivities(transformedActivities)
+      } catch (error) {
+        console.error("Failed to fetch activities:", error)
+        setFetchError(error instanceof Error ? error.message : "An unknown error occurred while fetching activities.")
+      } finally {
+        setIsLoadingActivities(false)
+      }
+    }
+
+    fetchActivitiesData()
+  }, [])
 
   const handleActivityToggle = (activityId: number) => {
     setSelectedActivities((prev) =>
@@ -112,15 +88,64 @@ export default function TripPlannerPage() {
   }
 
   const getFilteredActivities = () => {
-    return activities.filter((activity) => {
-      if (interests.length === 0) return true
-      return activity.tags.some((tag) => interests.includes(tag))
+    return allActivities.filter((activity) => {
+      // Interest (Tags) Filter
+      let matchesInterests = true
+      if (interests.length > 0) {
+        matchesInterests = activity.tags.some((tag) => interests.includes(tag))
+      }
+
+      // Group Size (Best For) Filter
+      let matchesGroupSize = true
+      if (groupSize) {
+        // groupSize state is like "solo", "couple" (lowercase)
+        // activity.bestFor is an array like ["Solo", "Couple", "Family"] (can be mixed case from API)
+        matchesGroupSize = activity.bestFor.some(
+          (bf) => bf.toLowerCase() === groupSize.toLowerCase(),
+        )
+      }
+
+      // Budget Filter
+      let matchesBudget = true
+      if (budget) {
+        // budget state is "budget", "moderate", "luxury"
+        // activity.cost is expected to be "$", "$$", "$$$"
+        const budgetMap: { [key: string]: string } = {
+          budget: "$",
+          moderate: "$$",
+          luxury: "$$$",
+        }
+        if (budgetMap[budget]) {
+          matchesBudget = activity.cost === budgetMap[budget]
+        } else {
+          matchesBudget = false // Or handle as per desired logic if budget value is unexpected
+        }
+      }
+
+      // Trip Duration Filter
+      // Filters out activities that are individually too long for the selected total trip duration.
+      let matchesTripDuration = true
+      if (tripDuration && tripDuration !== "7+") { // "7+" implies no upper limit for this filter
+        const activityHours = activity.timeNeeded // in hours
+        let maxTotalTripHoursForActivity = Infinity
+
+        // Assuming 8 activity hours per day for the trip
+        if (tripDuration === "1-2") maxTotalTripHoursForActivity = 2 * 8 // 16 hours
+        else if (tripDuration === "3-4") maxTotalTripHoursForActivity = 4 * 8 // 32 hours
+        else if (tripDuration === "5-7") maxTotalTripHoursForActivity = 7 * 8 // 56 hours
+
+        if (activityHours > maxTotalTripHoursForActivity) {
+          matchesTripDuration = false
+        }
+      }
+
+      return matchesInterests && matchesGroupSize && matchesBudget && matchesTripDuration
     })
   }
 
   const getTotalTime = () => {
-    return selectedActivities.reduce((total, id) => {
-      const activity = activities.find((a) => a.id === id)
+    return selectedActivities.reduce((total, activityId) => {
+      const activity = allActivities.find((a) => a.id === activityId)
       return total + (activity?.timeNeeded || 0)
     }, 0)
   }
@@ -232,72 +257,79 @@ export default function TripPlannerPage() {
               </CardHeader>
             </Card>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {getFilteredActivities().map((activity) => (
-                <Card
-                  key={activity.id}
-                  className={`overflow-hidden transition-all duration-300 hover:shadow-lg cursor-pointer ${
-                    selectedActivities.includes(activity.id) ? "ring-2 ring-emerald-500 bg-emerald-50" : ""
-                  }`}
-                  onClick={() => handleActivityToggle(activity.id)}
-                >
-                  <div className="relative">
-                    <Image
-                      src={activity.image || "/placeholder.svg"}
-                      alt={activity.name}
-                      width={300}
-                      height={200}
-                      className="w-full h-48 object-cover"
-                    />
-                    <Badge className="absolute top-4 left-4 bg-emerald-500">{activity.category}</Badge>
-                    <div className="absolute top-4 right-4 bg-white/90 rounded-full p-2">
-                      {selectedActivities.includes(activity.id) ? (
-                        <div className="w-4 h-4 bg-emerald-500 rounded-full"></div>
-                      ) : (
-                        <Plus className="w-4 h-4 text-gray-600" />
-                      )}
-                    </div>
-                    <div className="absolute bottom-4 left-4 flex items-center bg-white/90 rounded-full px-2 py-1">
-                      <Star className="h-4 w-4 text-yellow-500 mr-1" />
-                      <span className="text-sm font-semibold">{activity.rating}</span>
-                    </div>
-                  </div>
-
-                  <CardHeader>
-                    <CardTitle className="text-lg">{activity.name}</CardTitle>
-                    <CardDescription>{activity.description}</CardDescription>
-                  </CardHeader>
-
-                  <CardContent>
-                    <div className="space-y-3">
-                      <div className="flex justify-between text-sm text-gray-600">
-                        <div className="flex items-center">
-                          <Clock className="h-4 w-4 mr-1" />
-                          {activity.duration}
+            {isLoadingActivities && <p className="text-center py-4">Loading activities...</p>}
+            {fetchError && <p className="text-center py-4 text-red-500">Error: {fetchError}</p>}
+            {!isLoadingActivities && !fetchError && (
+              <>
+                {getFilteredActivities().length === 0 && allActivities.length > 0 && (
+                  <p className="text-center py-4 text-gray-500">
+                    No activities match your current filters. Try adjusting your interests.
+                  </p>
+                )}
+                {allActivities.length === 0 && !fetchError && (
+                  <p className="text-center py-4 text-gray-500">
+                    No activities available at the moment. Please check back later.
+                  </p>
+                )}
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {getFilteredActivities().map((activity) => (
+                    <Card
+                      key={activity.id}
+                      className={`overflow-hidden transition-all duration-300 hover:shadow-lg cursor-pointer ${selectedActivities.includes(activity.id) ? "ring-2 ring-emerald-500 bg-emerald-50" : ""
+                        }`}
+                      onClick={() => handleActivityToggle(activity.id)}
+                    >
+                      <div className="relative">
+                        <img src={activity.image} alt="Banner" className="w-full h-48 object-cover" />
+                        <Badge className="absolute top-4 left-4 bg-emerald-500">{activity.category}</Badge>
+                        <div className="absolute top-4 right-4 bg-white/90 rounded-full p-2">
+                          {selectedActivities.includes(activity.id) ? (
+                            <div className="w-4 h-4 bg-emerald-500 rounded-full"></div>
+                          ) : (
+                            <Plus className="w-4 h-4 text-gray-600" />
+                          )}
                         </div>
-                        <div className="flex items-center">
-                          <DollarSign className="h-4 w-4 mr-1" />
-                          {activity.cost}
+                        <div className="absolute bottom-4 left-4 flex items-center bg-white/90 rounded-full px-2 py-1">
+                          <Star className="h-4 w-4 text-yellow-500 mr-1" />
+                          <span className="text-sm font-semibold">{activity.rating}</span>
                         </div>
                       </div>
 
-                      <div className="flex flex-wrap gap-1">
-                        {activity.tags.map((tag) => (
-                          <Badge key={tag} variant="outline" className="text-xs">
-                            {tag}
-                          </Badge>
-                        ))}
-                      </div>
+                      <CardHeader>
+                        <CardTitle className="text-lg">{activity.name}</CardTitle>
+                        <CardDescription>{activity.description}</CardDescription>
+                      </CardHeader>
 
-                      <div className="flex items-center text-sm text-gray-600">
-                        <Users className="h-4 w-4 mr-1" />
-                        Best for: {activity.bestFor.join(", ")}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+                      <CardContent>
+                        <div className="space-y-3">
+                          <div className="flex justify-between text-sm text-gray-600">
+                            <div className="flex items-center">
+                              <Clock className="h-4 w-4 mr-1" />
+                              {activity.duration}
+                            </div>
+                            <div className="flex items-center">
+                              <DollarSign className="h-4 w-4 mr-1" />
+                              {activity.cost}
+                            </div>
+                          </div>
+                          <div className="flex flex-wrap gap-1">
+                            {activity.tags.map((tag) => (
+                              <Badge key={tag} variant="outline" className="text-xs">
+                                {tag}
+                              </Badge>
+                            ))}
+                          </div>
+                          <div className="flex items-center text-sm text-gray-600">
+                            <Users className="h-4 w-4 mr-1" />
+                            Best for: {activity.bestFor.join(", ")}
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </>
+            )}
           </TabsContent>
 
           {/* Itinerary Tab */}
@@ -320,7 +352,7 @@ export default function TripPlannerPage() {
                     ) : (
                       <div className="space-y-4">
                         {selectedActivities.map((activityId, index) => {
-                          const activity = activities.find((a) => a.id === activityId)
+                          const activity = allActivities.find((a) => a.id === activityId)
                           if (!activity) return null
 
                           return (
@@ -328,13 +360,7 @@ export default function TripPlannerPage() {
                               <div className="w-16 h-16 bg-emerald-100 rounded-lg flex items-center justify-center text-emerald-600 font-semibold">
                                 {index + 1}
                               </div>
-                              <Image
-                                src={activity.image || "/placeholder.svg"}
-                                alt={activity.name}
-                                width={80}
-                                height={60}
-                                className="w-20 h-15 object-cover rounded"
-                              />
+                              <img src={activity.image} alt="Banner" className="w-20 h-15 object-cover rounded" />
                               <div className="flex-1">
                                 <h4 className="font-semibold">{activity.name}</h4>
                                 <p className="text-sm text-gray-600">{activity.description}</p>

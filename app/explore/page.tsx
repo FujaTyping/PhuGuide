@@ -1,90 +1,80 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { MapPin, Search, Star, Clock, DollarSign } from "lucide-react"
-import Image from "next/image"
 import Link from "next/link"
+
+// Define the structure of the destination data from the API
+interface ApiDestination {
+  id: number;
+  name: string;
+  category: string;
+  image: string;
+  description: string;
+  rating: number;
+  duration: string;
+  price: string;
+  tags: string; // Tags come as a comma-separated string from the API
+}
+
+// Define the structure of the destination data used in the component
+interface Destination {
+  id: number;
+  name: string;
+  category: string;
+  image: string;
+  description: string;
+  rating: number;
+  duration: string;
+  price: string;
+  tags: string[]; // Tags will be an array of strings
+}
+
+const API_URL = "https://script.google.com/macros/s/AKfycby6QfIZQ5vybUKjXTS_f8SopLxHKH5mJQutGzUx_9gNrOVhO8zmhI3iGaYJNh6kIN2Gyg/exec";
 
 export default function ExplorePage() {
   const [searchTerm, setSearchTerm] = useState("")
-
-  const destinations = [
-    {
-      id: 1,
-      name: "Khao Sok National Park",
-      category: "Nature",
-      image: "/placeholder.svg?height=250&width=400",
-      description: "Ancient rainforest with limestone cliffs and pristine lakes",
-      rating: 4.8,
-      duration: "Full Day",
-      price: "$$",
-      tags: ["Adventure", "Eco-Friendly"],
-    },
-    {
-      id: 2,
-      name: "Tapi River Cruise",
-      category: "Activities",
-      image: "/placeholder.svg?height=250&width=400",
-      description: "Scenic boat ride through mangroves and local villages",
-      rating: 4.6,
-      duration: "3 Hours",
-      price: "$",
-      tags: ["Relaxing", "Family"],
-    },
-    {
-      id: 3,
-      name: "Night Market Food Tour",
-      category: "Food",
-      image: "/placeholder.svg?height=250&width=400",
-      description: "Taste authentic Southern Thai street food and delicacies",
-      rating: 4.9,
-      duration: "2 Hours",
-      price: "$",
-      tags: ["Food", "Culture"],
-    },
-    {
-      id: 4,
-      name: "Wat Chalong Temple",
-      category: "Culture",
-      image: "/placeholder.svg?height=250&width=400",
-      description: "Historic Buddhist temple with stunning architecture",
-      rating: 4.7,
-      duration: "2 Hours",
-      price: "Free",
-      tags: ["Culture", "Spiritual"],
-    },
-    {
-      id: 5,
-      name: "Kayaking Adventure",
-      category: "Activities",
-      image: "/placeholder.svg?height=250&width=400",
-      description: "Paddle through hidden lagoons and sea caves",
-      rating: 4.5,
-      duration: "Half Day",
-      price: "$$",
-      tags: ["Adventure", "Water Sports"],
-    },
-    {
-      id: 6,
-      name: "Local Cooking Class",
-      category: "Food",
-      image: "/placeholder.svg?height=250&width=400",
-      description: "Learn to cook traditional Southern Thai dishes",
-      rating: 4.8,
-      duration: "4 Hours",
-      price: "$$",
-      tags: ["Food", "Learning"],
-    },
-  ]
+  const [destinations, setDestinations] = useState<Destination[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [selectedCategory, setSelectedCategory] = useState("All")
 
   const categories = ["All", "Nature", "Food", "Culture", "Activities"]
+  // Note: You might want to derive categories dynamically from the fetched data
+  // const categories = ["All", ...new Set(destinations.map(d => d.category))];
 
-  const [selectedCategory, setSelectedCategory] = useState("All")
+  useEffect(() => {
+    const fetchDestinations = async () => {
+      setLoading(true)
+      setError(null)
+      try {
+        const response = await fetch(API_URL)
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
+        const data: ApiDestination[] = await response.json()
+
+        // Transform data: split tags string into an array
+        const transformedData: Destination[] = data.map(item => ({
+          ...item,
+          tags: item.tags ? item.tags.split(',').map(tag => tag.trim()) : [],
+        }));
+        setDestinations(transformedData)
+      } catch (e) {
+        console.error("Failed to fetch destinations:", e)
+        setError(e instanceof Error ? e.message : "An unknown error occurred")
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchDestinations()
+  }, [])
 
   const filteredDestinations = destinations.filter((dest) => {
     const matchesCategory = selectedCategory === "All" || dest.category === selectedCategory
@@ -134,6 +124,18 @@ export default function ExplorePage() {
           </Tabs>
         </div>
 
+        {loading && (
+          <div className="text-center py-12">
+            <p className="text-xl text-gray-600">Loading destinations...</p>
+          </div>
+        )}
+
+        {error && (
+          <div className="text-center py-12 text-red-600">
+            <p className="text-xl">Failed to load destinations: {error}</p>
+          </div>
+        )}
+
         {/* Destinations Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredDestinations.map((destination) => (
@@ -142,13 +144,7 @@ export default function ExplorePage() {
               className="overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-2 group"
             >
               <div className="relative">
-                <Image
-                  src={destination.image || "/placeholder.svg"}
-                  alt={destination.name}
-                  width={400}
-                  height={250}
-                  className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                />
+                <img src={destination.image} alt="image" className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300" />
                 <Badge className="absolute top-4 left-4 bg-emerald-500">{destination.category}</Badge>
                 <div className="absolute bottom-4 left-4 flex items-center bg-white/90 rounded-full px-2 py-1">
                   <Star className="h-4 w-4 text-yellow-500 mr-1" />
@@ -196,7 +192,7 @@ export default function ExplorePage() {
           ))}
         </div>
 
-        {filteredDestinations.length === 0 && (
+        {!loading && !error && filteredDestinations.length === 0 && (
           <div className="text-center py-12">
             <p className="text-xl text-gray-600">No destinations found matching your criteria.</p>
             <Button

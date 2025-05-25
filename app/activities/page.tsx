@@ -1,120 +1,133 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { MapPin, Clock, DollarSign, Star, Users, Calendar } from "lucide-react"
-import Image from "next/image"
+import { MapPin, Clock, DollarSign, Star, Users } from "lucide-react"
 import Link from "next/link"
 
-export default function ActivitiesPage() {
-  const activities = [
-    {
-      id: 1,
-      title: "Khao Sok National Park Tour",
-      description: "Guided tour through ancient rainforest with wildlife spotting opportunities",
-      location: "Khao Sok National Park",
-      duration: "8 hours",
-      price: "$$",
-      category: "Nature",
-      image: "/placeholder.svg?height=200&width=300",
-      rating: 4.8,
-      groupSize: "2-12 people",
-      includes: ["Transportation", "Guide", "Lunch", "Park entrance"],
-      bestTime: "Nov-Apr",
-    },
-    {
-      id: 2,
-      title: "Tapi River Boat Tour",
-      description: "Scenic cruise through mangroves with stops at local fishing villages",
-      location: "Tapi River",
-      duration: "3 hours",
-      price: "$",
-      category: "Activities",
-      image: "/placeholder.svg?height=200&width=300",
-      rating: 4.6,
-      groupSize: "1-20 people",
-      includes: ["Boat ride", "Local guide", "Refreshments"],
-      bestTime: "Year round",
-    },
-    {
-      id: 3,
-      title: "Street Food Walking Tour",
-      description: "Explore local night markets and taste authentic Southern Thai cuisine",
-      location: "Night Market",
-      duration: "3 hours",
-      price: "$",
-      category: "Food",
-      image: "/placeholder.svg?height=200&width=300",
-      rating: 4.9,
-      groupSize: "2-8 people",
-      includes: ["Food tastings", "Local guide", "Market tour"],
-      bestTime: "Evening",
-    },
-    {
-      id: 4,
-      title: "Temple Hopping Tour",
-      description: "Visit historic Buddhist temples and learn about local culture",
-      location: "Various Temples",
-      duration: "4 hours",
-      price: "$",
-      category: "Culture",
-      image: "/placeholder.svg?height=200&width=300",
-      rating: 4.7,
-      groupSize: "1-15 people",
-      includes: ["Transportation", "Guide", "Temple donations"],
-      bestTime: "Morning",
-    },
-    {
-      id: 5,
-      title: "Sea Kayaking Adventure",
-      description: "Paddle through limestone karsts and hidden lagoons",
-      location: "Coastal Areas",
-      duration: "6 hours",
-      price: "$$",
-      category: "Activities",
-      image: "/placeholder.svg?height=200&width=300",
-      rating: 4.5,
-      groupSize: "2-10 people",
-      includes: ["Kayak equipment", "Guide", "Lunch", "Safety gear"],
-      bestTime: "Nov-Apr",
-    },
-    {
-      id: 6,
-      title: "Thai Cooking Workshop",
-      description: "Learn to prepare traditional Southern Thai dishes from local chefs",
-      location: "Cooking School",
-      duration: "4 hours",
-      price: "$$",
-      category: "Food",
-      image: "/placeholder.svg?height=200&width=300",
-      rating: 4.8,
-      groupSize: "2-12 people",
-      includes: ["Ingredients", "Recipes", "Meal", "Certificate"],
-      bestTime: "Morning",
-    },
-  ]
+// Interface for the raw data fetched from the API
+interface ApiActivity {
+  id: number
+  title: string
+  description: string
+  location: string
+  duration: string
+  price: number // Price is a number from the API
+  category: string // Comma-separated string, e.g., "Speedboat,Sightseeing"
+  image: string
+  rating: string // e.g., "4.9/5 average"
+  groupSize: number // Group size is a number
+  includes: string // Newline-separated string
+  // 'bestTime' is not available in the new API data
+}
 
-  const categories = ["All", "Nature", "Food", "Culture", "Activities"]
+// Interface for the processed activity data used in the component
+interface ProcessedActivity {
+  id: number
+  title: string
+  description: string
+  location: string
+  duration: string
+  displayPrice: string // Formatted price for display
+  primaryCategory: string // For the badge, usually the first category
+  allCategories: string[] // All categories for filtering
+  image: string
+  rating: number // Parsed numeric rating
+  groupSize: string // Formatted group size string
+  includes: string[] // Array of included items
+}
+
+export default function ActivitiesPage() {
+  const [activities, setActivities] = useState<ProcessedActivity[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [categories, setCategories] = useState<string[]>(["All"])
   const [selectedCategory, setSelectedCategory] = useState("All")
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoading(true)
+        setError(null)
+        const response = await fetch(
+          "https://script.google.com/macros/s/AKfycbyiqShMaQdMbjRsFrHhdC9gtQbldFvDquSr_ONIHMCd_bgV8xeWV_ROGIUpdEL8MmY1/exec",
+        )
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
+        const data: ApiActivity[] = await response.json()
+
+        const uniqueCategories = new Set<string>()
+        const processedData: ProcessedActivity[] = data.map((item) => {
+          console.log(item);
+          const itemCategories = item.category.split(",").map((c) => c.trim()).filter(Boolean)
+          itemCategories.forEach((cat) => uniqueCategories.add(cat))
+
+          return {
+            id: item.id,
+            title: item.title,
+            description: item.description,
+            location: item.location,
+            duration: item.duration,
+            displayPrice: `${item.price.toLocaleString()} THB`,
+            primaryCategory: itemCategories[0] || "General",
+            allCategories: itemCategories,
+            image: item.image || "/placeholder.svg?height=200&width=300",
+            rating: parseFloat(item.rating.split("/")[0]) || 0,
+            groupSize: `Up to ${item.groupSize} people`,
+            includes: item.includes.split("\n").map((i) => i.trim()).filter(Boolean),
+          }
+        })
+
+        setActivities(processedData)
+        setCategories(["All", ...Array.from(uniqueCategories)])
+      } catch (e) {
+        if (e instanceof Error) {
+          setError(e.message)
+        } else {
+          setError("An unknown error occurred")
+        }
+        console.error("Failed to fetch activities:", e)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchData()
+  }, [])
+
   const filteredActivities = activities.filter(
-    (activity) => selectedCategory === "All" || activity.category === selectedCategory,
+    (activity) => selectedCategory === "All" || activity.allCategories.includes(selectedCategory),
   )
 
-  const getPriceRange = (price: string) => {
-    switch (price) {
-      case "$":
-        return "500-1,000 THB"
-      case "$$":
-        return "1,000-2,500 THB"
-      case "$$$":
-        return "2,500+ THB"
-      default:
-        return "Free"
-    }
+  // Emojis for known categories, can be expanded
+  const categoryEmojis: { [key: string]: string } = {
+    Nature: "🏞️",
+    Food: "🍜",
+    Culture: "🛕",
+    Activities: "🛶",
+    Speedboat: "🚤",
+    Sightseeing: "👀",
+  }
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-amber-50 to-emerald-50 flex justify-center items-center">
+        <p className="text-xl text-gray-700">Loading activities...</p>
+        {/* Consider adding a spinner component here */}
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-amber-50 to-emerald-50 flex justify-center items-center">
+        <p className="text-xl text-red-600">Error loading activities: {error}</p>
+      </div>
+    )
   }
 
   return (
@@ -130,14 +143,11 @@ export default function ActivitiesPage() {
 
         {/* Category Filters */}
         <Tabs value={selectedCategory} onValueChange={setSelectedCategory} className="mb-8">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="w-full"> {/* Removed grid-cols-5 for better responsiveness with dynamic categories */}
             {categories.map((category) => (
               <TabsTrigger key={category} value={category} className="text-sm">
-                {category === "Nature" && "🏞️"}
-                {category === "Food" && "🍜"}
-                {category === "Culture" && "🛕"}
-                {category === "Activities" && "🛶"}
-                {category}
+                {categoryEmojis[category] && `${categoryEmojis[category]} `}
+                {category.charAt(0).toUpperCase() + category.slice(1)}
               </TabsTrigger>
             ))}
           </TabsList>
@@ -149,14 +159,8 @@ export default function ActivitiesPage() {
             <Card key={activity.id} className="overflow-hidden hover:shadow-xl transition-all duration-300">
               <div className="md:flex">
                 <div className="md:w-1/3 relative">
-                  <Image
-                    src={activity.image || "/placeholder.svg"}
-                    alt={activity.title}
-                    width={300}
-                    height={200}
-                    className="w-full h-48 md:h-full object-cover"
-                  />
-                  <Badge className="absolute top-4 left-4 bg-emerald-500">{activity.category}</Badge>
+                  <img src={activity.image} alt="Image" className="w-full h-48 md:h-full object-cover" />
+                  <Badge className="absolute top-4 left-4 bg-emerald-500">{activity.primaryCategory}</Badge>
                   <div className="absolute bottom-4 left-4 flex items-center bg-white/90 rounded-full px-2 py-1">
                     <Star className="h-4 w-4 text-yellow-500 mr-1" />
                     <span className="text-sm font-semibold">{activity.rating}</span>
@@ -181,7 +185,7 @@ export default function ActivitiesPage() {
                       </div>
                       <div className="flex items-center">
                         <DollarSign className="h-4 w-4 mr-2" />
-                        {getPriceRange(activity.price)}
+                        {activity.displayPrice}
                       </div>
                       <div className="flex items-center">
                         <Users className="h-4 w-4 mr-2" />
@@ -200,11 +204,7 @@ export default function ActivitiesPage() {
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between pt-4">
-                      <div className="flex items-center text-sm text-gray-600">
-                        <Calendar className="h-4 w-4 mr-1" />
-                        Best: {activity.bestTime}
-                      </div>
+                    <div className="flex justify-end pt-4"> {/* Adjusted alignment as 'Best Time' is removed */}
                       <div className="flex gap-2">
                         <Link href={`/activities/${activity.id}`}>
                           <Button variant="outline">Details</Button>
@@ -218,6 +218,15 @@ export default function ActivitiesPage() {
             </Card>
           ))}
         </div>
+
+        {filteredActivities.length === 0 && !isLoading && (
+          <div className="text-center py-12">
+            <h2 className="text-2xl font-semibold text-gray-700 mb-2">No Activities Found</h2>
+            <p className="text-gray-500">
+              Try selecting a different category or check back later for new activities.
+            </p>
+          </div>
+        )}
 
         {/* Booking Information */}
         <Card className="mt-12">
