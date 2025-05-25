@@ -113,7 +113,16 @@ export default function Chatbot({
                                 </div>
                             </div>
                         ))}
-                        {isSending && <div className="flex justify-start"><div className="max-w-[80%] p-3 rounded-lg text-sm bg-gray-200 text-gray-800"><span className="italic">Assistant is typing...</span></div></div>}
+                        {isSending && (
+                            <div className="flex justify-start">
+                                <div className="max-w-[80%] p-3 rounded-lg text-sm bg-gray-200 text-gray-800 flex items-center space-x-1">
+                                    <span className="italic">Assistant is typing</span>
+                                    <span className="animate-bounce [animation-delay:-0.3s] inline-block w-1.5 h-1.5 bg-current rounded-full"></span>
+                                    <span className="animate-bounce [animation-delay:-0.15s] inline-block w-1.5 h-1.5 bg-current rounded-full"></span>
+                                    <span className="animate-bounce inline-block w-1.5 h-1.5 bg-current rounded-full"></span>
+                                </div>
+                            </div>
+                        )}
                         <div ref={messagesEndRef} />
                     </div>
 

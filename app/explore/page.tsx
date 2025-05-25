@@ -20,6 +20,7 @@ interface ApiDestination {
   duration: string;
   price: string;
   tags: string; // Tags come as a comma-separated string from the API
+  maps: string; // URL for the map
 }
 
 // Define the structure of the destination data used in the component
@@ -33,6 +34,7 @@ interface Destination {
   duration: string;
   price: string;
   tags: string[]; // Tags will be an array of strings
+  maps: string; // URL for the map
 }
 
 const API_URL = "https://script.google.com/macros/s/AKfycby6QfIZQ5vybUKjXTS_f8SopLxHKH5mJQutGzUx_9gNrOVhO8zmhI3iGaYJNh6kIN2Gyg/exec";
@@ -179,8 +181,8 @@ export default function ExplorePage() {
                   </div>
 
                   <div className="pt-2">
-                    <Link href={`/explore/${destination.id}`}>
-                      <Button className="w-full bg-emerald-500 hover:bg-emerald-600">
+                    <Link href={`${destination.maps}`}>
+                      <Button className="w-full bg-orange-500 hover:bg-orange-600">
                         <MapPin className="h-4 w-4 mr-1" />
                         Learn More
                       </Button>

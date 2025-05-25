@@ -5,7 +5,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import B1 from "@/assets/banner/banner1.jpg"
 import B2 from "@/assets/banner/banner2.jpg"
 import B3 from "@/assets/banner/banner3.jpg"
-import { EffectFade } from 'swiper/modules';
+import { EffectFade, Autoplay } from 'swiper/modules';
 
 function Banner() {
     return (
@@ -14,7 +14,11 @@ function Banner() {
                 spaceBetween={0}
                 loop={true}
                 effect={'fade'}
-                modules={[EffectFade]}
+                autoplay={{
+                    delay: 2500,
+                    disableOnInteraction: false,
+                }}
+                modules={[EffectFade, Autoplay]}
                 slidesPerView={1}
             >
                 <SwiperSlide>

@@ -20,12 +20,40 @@ export default function ContactPage() {
     inquiryType: "",
   })
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // This would integrate with Make.com webhook in real implementation
-    console.log("Form submitted:", formData)
-    alert("Thank you for your message! We'll get back to you within 24 hours.")
-    setFormData({ name: "", email: "", subject: "", message: "", inquiryType: "" })
+
+    const webhookUrl = "https://hook.eu2.make.com/fm6a3dv2tktoyxcyhw5avivknj6rnloy"
+    const bodyPayload = {
+      fullname: formData.name,
+      email: formData.email,
+      subject: formData.subject,
+      message: formData.message,
+      // You can include inquiryType if your Make.com scenario expects it
+      // inquiryType: formData.inquiryType,
+    }
+
+    try {
+      const response = await fetch(webhookUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(bodyPayload),
+      })
+
+      if (response.ok) {
+        console.log("Form submitted successfully:", bodyPayload)
+        alert("Thank you for your message! We'll get back to you within 24 hours.")
+        setFormData({ name: "", email: "", subject: "", message: "", inquiryType: "" })
+      } else {
+        console.error("Form submission error:", response.status, await response.text())
+        alert("Sorry, there was an issue sending your message. Please try again later.")
+      }
+    } catch (error) {
+      console.error("Network error or other issue:", error)
+      alert("Sorry, there was a network error. Please check your connection and try again.")
+    }
   }
 
   const handleInputChange = (field: string, value: string) => {

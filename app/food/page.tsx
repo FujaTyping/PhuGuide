@@ -45,6 +45,7 @@ interface Restaurant {
   location: string
   hours: string
   atmosphere: string
+  maps: string // URL for the map
 }
 
 interface FetchedRestaurant {
@@ -59,6 +60,7 @@ interface FetchedRestaurant {
   location: string
   hours: string
   atmosphere: string
+  maps: string // URL for the map
 }
 
 export default function FoodGuidePage() {
@@ -296,10 +298,12 @@ export default function FoodGuidePage() {
                                 </div>
                               </div>
 
-                              <Button className="w-full bg-emerald-500 hover:bg-emerald-600 mt-4">
-                                <MapPin className="h-4 w-4 mr-2" />
-                                Get Directions
-                              </Button>
+                              <a href={`${restaurant.maps}`}>
+                                <Button className="w-full bg-orange-500 hover:bg-orange-600 mt-4">
+                                  <MapPin className="h-4 w-4 mr-2" />
+                                  Get Directions
+                                </Button>
+                              </a>
                             </CardContent>
                           </div>
                         </div>
