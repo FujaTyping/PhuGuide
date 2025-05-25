@@ -16,8 +16,6 @@ function Banner() {
                 effect={'fade'}
                 modules={[EffectFade]}
                 slidesPerView={1}
-                onSlideChange={() => console.log('slide change')}
-                onSwiper={(swiper) => console.log(swiper)}
             >
                 <SwiperSlide>
                     <div className="relative">

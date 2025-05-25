@@ -39,7 +39,7 @@ export default function ContactPage() {
         <div className="text-center mb-12">
           <h1 className="text-5xl font-bold text-gray-800 mb-4 font-poppins">Contact Us</h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Have questions about your Surat Thani adventure? We're here to help you plan the perfect trip!
+            Have questions about your Surat Thani adventure? {"We're"} here to help you plan the perfect trip!
           </p>
         </div>
 
@@ -49,7 +49,7 @@ export default function ContactPage() {
             <Card>
               <CardHeader>
                 <CardTitle>Send us a Message</CardTitle>
-                <CardDescription>Fill out the form below and we'll respond within 24 hours</CardDescription>
+                <CardDescription>Fill out the form below and {"we'll"} respond within 24 hours</CardDescription>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-6">
@@ -227,7 +227,7 @@ export default function ContactPage() {
                   </p>
                 </div>
                 <div>
-                  <h4 className="font-semibold text-sm">What's included in tour packages?</h4>
+                  <h4 className="font-semibold text-sm">{"What's"} included in tour packages?</h4>
                   <p className="text-xs text-gray-600">
                     Each package varies - check individual tour descriptions for details.
                   </p>

@@ -331,19 +331,19 @@ export default function FoodGuidePage() {
                   <div>
                     <h4 className="font-semibold mb-2">Dining Etiquette</h4>
                     <ul className="text-sm text-gray-600 space-y-1">
-                      <li>• Use a spoon and fork (spoon in right hand)</li>
+                      <li>• Use a spoon and fork {"(spoon in right hand)"}</li>
                       <li>• Share dishes when eating in groups</li>
-                      <li>• Don't finish everything on your plate</li>
+                      <li>• Don&apos;t finish everything on your plate</li>
                       <li>• Wait for elders to start eating first</li>
                     </ul>
                   </div>
                   <div>
                     <h4 className="font-semibold mb-2">Useful Phrases</h4>
                     <ul className="text-sm text-gray-600 space-y-1">
-                      <li>• "Aroy mak" - Very delicious</li>
-                      <li>• "Mai pet" - Not spicy</li>
-                      <li>• "Gin jay" - Vegetarian food</li>
-                      <li>• "Check bin" - Check please</li>
+                      <li>• &quot;Aroy mak&quot; - Very delicious</li>
+                      <li>• &quot;Mai pet&quot; - Not spicy</li>
+                      <li>• &quot;Gin jay&quot; - Vegetarian food</li>
+                      <li>• &quot;Check bin&quot; - Check please</li>
                     </ul>
                   </div>
                 </div>

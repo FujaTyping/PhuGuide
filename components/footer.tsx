@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { MapPin, Facebook, Instagram, Twitter } from "lucide-react"
+import { Facebook, Instagram, Twitter } from "lucide-react"
 import Logo from "@/assets/favicon.png"
 
 export function Footer() {

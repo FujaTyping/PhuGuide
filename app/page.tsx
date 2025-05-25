@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 
 import { useEffect, useState } from "react"
@@ -5,7 +6,6 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { MapPin, Calendar, Users, Clock, ActivitySquare, Landmark, UtensilsCrossed } from "lucide-react"
-import Image from "next/image"
 import Link from "next/link"
 import Banner from "@/components/banner"
 
@@ -25,36 +25,6 @@ interface FetchedPlaceData {
 }
 
 export default function HomePage() {
-  const featuredPlaces = [
-    {
-      id: 1,
-      name: "Khao Sok National Park",
-      category: "Nature",
-      image: "/placeholder.svg?height=200&width=300",
-      description: "Ancient rainforest with limestone cliffs",
-      duration: "Full Day",
-      bestTime: "Nov-Apr",
-    },
-    {
-      id: 2,
-      name: "Tapi River Cruise",
-      category: "Activities",
-      image: "/placeholder.svg?height=200&width=300",
-      description: "Scenic boat ride through mangroves",
-      duration: "3 Hours",
-      bestTime: "Year Round",
-    },
-    {
-      id: 3,
-      name: "Night Market Food Tour",
-      category: "Food",
-      image: "/placeholder.svg?height=200&width=300",
-      description: "Taste authentic Southern Thai cuisine",
-      duration: "2 Hours",
-      bestTime: "Evening",
-    },
-  ]
-
   const tripTypes = [
     { name: "การเดินทาง", icon: "🏔️", description: "กิจกรรมกลางแจ้งและสำรวจธรรมชาติ" },
     { name: "วัฒนธรรม", icon: "🛕", description: "วัด ประเพณี และประสบการณ์ท้องถิ่น" },
