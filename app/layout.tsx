@@ -6,6 +6,7 @@ import { Navigation } from "@/components/navigation"
 import { Footer } from "@/components/footer"
 import 'swiper/css';
 import 'swiper/css/effect-fade';
+import Chatbot from "@/components/chatbot"
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
 const poppins = Poppins({
@@ -15,8 +16,8 @@ const poppins = Poppins({
 })
 
 export const metadata: Metadata = {
-  title: "Suratani Travel Advisor",
-  description: "Gamified tourism platform for Surat Thani, Thailand",
+  title: "PhuGuide Travel Advisor",
+  description: "Gamified tourism platform for Phuket, Thailand",
 }
 
 export default function RootLayout({
@@ -30,6 +31,7 @@ export default function RootLayout({
         <Navigation />
         <main>{children}</main>
         <Footer />
+        <Chatbot />
       </body>
     </html>
   )

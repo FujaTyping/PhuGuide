@@ -39,7 +39,7 @@ export default function ContactPage() {
         <div className="text-center mb-12">
           <h1 className="text-5xl font-bold text-gray-800 mb-4 font-poppins">Contact Us</h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Have questions about your Surat Thani adventure? {"We're"} here to help you plan the perfect trip!
+            Have questions about your  Phuket adventure? {"We're"} here to help you plan the perfect trip!
           </p>
         </div>
 
@@ -145,9 +145,9 @@ export default function ContactPage() {
                     <p className="text-sm text-gray-600">
                       123 Tourism Center
                       <br />
-                      Surat Thani City
+                      Phuket City
                       <br />
-                      Surat Thani 84000, Thailand
+                      SPhuket 84000, Thailand
                     </p>
                   </div>
                 </div>

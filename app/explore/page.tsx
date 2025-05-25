@@ -89,7 +89,7 @@ export default function ExplorePage() {
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold text-gray-800 mb-4 font-poppins">Explore Surat Thani</h1>
+          <h1 className="text-5xl font-bold text-gray-800 mb-4 font-poppins">Explore Phuket</h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
             Discover amazing destinations and authentic experiences in the heart of Southern Thailand
           </p>

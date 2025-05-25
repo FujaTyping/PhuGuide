@@ -137,7 +137,7 @@ export default function ActivitiesPage() {
         <div className="text-center mb-12">
           <h1 className="text-5xl font-bold text-gray-800 mb-4 font-poppins">Activities & Tours</h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Discover exciting activities and guided tours to make the most of your Surat Thani experience
+            Discover exciting activities and guided tours to make the most of your Phuket experience
           </p>
         </div>
 
@@ -232,7 +232,7 @@ export default function ActivitiesPage() {
         <Card className="mt-12">
           <CardHeader>
             <CardTitle>Booking Information</CardTitle>
-            <CardDescription>Important details for booking activities in Surat Thani</CardDescription>
+            <CardDescription>Important details for booking activities in  Phuket</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid md:grid-cols-3 gap-6">

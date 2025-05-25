@@ -162,7 +162,7 @@ export default function TripPlannerPage() {
         <div className="text-center mb-12">
           <h1 className="text-5xl font-bold text-gray-800 mb-4 font-poppins">Trip Planner</h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Create your perfect Surat Thani itinerary with personalized recommendations
+            Create your perfect Phuket itinerary with personalized recommendations
           </p>
         </div>
 
